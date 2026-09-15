@@ -1,0 +1,5 @@
+build/
+vcpkg_installed/
+data/*.db
+.DS_Store
+compile_commands.json
