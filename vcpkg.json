@@ -1,0 +1,10 @@
+{
+  "name": "stocks-toolkit",
+  "version": "0.1.0",
+  "dependencies": [
+    "curl",
+    "sqlite3",
+    "gtest",
+    "nlohmann-json"
+  ]
+}

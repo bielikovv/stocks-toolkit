@@ -1,0 +1,26 @@
+# One Yahoo Finance ticker symbol per line. Lines starting with '#' are ignored.
+NVDA
+AAPL
+MSFT
+GOOGL
+AMZN
+META
+TSLA
+AVGO
+NFLX
+AMD
+CRM
+ORCL
+ADBE
+QCOM
+JPM
+V
+MA
+UNH
+XOM
+CVX
+WMT
+COST
+HOOD
+MSTR
+SPY
