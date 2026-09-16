@@ -16,6 +16,10 @@ Not financial advice. No guarantee of accuracy or profitability.
   containment check (has price wandered further than its own recent volatility would predict).
   Thresholds are unvalidated defaults — M3 (backtester) is what's expected to tune them against
   real outcomes.
+- **M2 (grid parameter calculator):** given a ticker's recent Average True Range (ATR), suggests a
+  grid range (current price ± a multiple of ATR), a geometrically-spaced set of buy/sell levels
+  across that range, and an even capital/quantity split per level. Depends on M0 only. Thresholds
+  (ATR window, range multiplier, level count) are unvalidated defaults, same caveat as M1.
 
 Later modules (backtesting, correlation analysis, reporting) will build on top of these.
 

@@ -26,6 +26,12 @@ add_library(regime_detector
 target_include_directories(regime_detector PUBLIC include)
 target_link_libraries(regime_detector PUBLIC data_layer)
 
+add_library(grid_calculator
+    src/grid_calculator/grid_calculator.cpp
+)
+target_include_directories(grid_calculator PUBLIC include)
+target_link_libraries(grid_calculator PUBLIC data_layer)
+
 add_executable(stocks_toolkit_cli src/cli/main.cpp)
 target_link_libraries(stocks_toolkit_cli PRIVATE data_layer)
 
