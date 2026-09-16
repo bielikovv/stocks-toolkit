@@ -4,6 +4,7 @@
 
 #include <cstdio>
 #include <gtest/gtest.h>
+#include <stdexcept>
 
 using stocks_toolkit::PriceBar;
 using stocks_toolkit::PriceStore;
@@ -64,6 +65,63 @@ TEST(PriceStore, TickersDoNotCrossContaminate) {
     EXPECT_EQ(store.get_bars("nvda.us", "2024-01-01", "2024-01-31").size(), 1u);
     EXPECT_EQ(store.get_bars("tsla.us", "2024-01-01", "2024-01-31").size(), 2u);
     EXPECT_EQ(*store.last_date("tsla.us"), "2024-01-03");
+}
+
+TEST(PriceStore, GetLastNBarsIsEmptyWhenNoData) {
+    PriceStore store(":memory:");
+    EXPECT_TRUE(store.get_last_n_bars("nvda.us", "2024-01-31", 5).empty());
+}
+
+TEST(PriceStore, GetLastNBarsReturnsFewerThanNWhenNotEnoughHistory) {
+    PriceStore store(":memory:");
+    store.upsert_bars("nvda.us", {make_bar("2024-01-02", 10.0), make_bar("2024-01-03", 11.0)});
+
+    auto bars = store.get_last_n_bars("nvda.us", "2024-01-31", 5);
+    ASSERT_EQ(bars.size(), 2u);
+    EXPECT_EQ(bars[0].date, "2024-01-02");
+    EXPECT_EQ(bars[1].date, "2024-01-03");
+}
+
+TEST(PriceStore, GetLastNBarsReturnsMostRecentNOrderedAscending) {
+    PriceStore store(":memory:");
+    store.upsert_bars("nvda.us", {make_bar("2024-01-02", 1.0), make_bar("2024-01-03", 2.0),
+                                  make_bar("2024-01-04", 3.0), make_bar("2024-01-05", 4.0)});
+
+    auto bars = store.get_last_n_bars("nvda.us", "2024-01-05", 2);
+    ASSERT_EQ(bars.size(), 2u);
+    EXPECT_EQ(bars[0].date, "2024-01-04");
+    EXPECT_EQ(bars[1].date, "2024-01-05");
+}
+
+TEST(PriceStore, GetLastNBarsRespectsAsOfDateCutoff) {
+    PriceStore store(":memory:");
+    store.upsert_bars("nvda.us", {make_bar("2024-01-02", 1.0), make_bar("2024-01-03", 2.0),
+                                  make_bar("2024-01-04", 3.0)});
+
+    auto bars = store.get_last_n_bars("nvda.us", "2024-01-03", 5);
+    ASSERT_EQ(bars.size(), 2u);
+    EXPECT_EQ(bars[0].date, "2024-01-02");
+    EXPECT_EQ(bars[1].date, "2024-01-03");
+}
+
+TEST(PriceStore, GetLastNBarsThrowsWhenNIsZero) {
+    PriceStore store(":memory:");
+    EXPECT_THROW(store.get_last_n_bars("nvda.us", "2024-01-31", 0), std::invalid_argument);
+}
+
+TEST(PriceStore, GetLastNBarsThrowsWhenNIsNegative) {
+    PriceStore store(":memory:");
+    store.upsert_bars("nvda.us", {make_bar("2024-01-02", 10.0)});
+    EXPECT_THROW(store.get_last_n_bars("nvda.us", "2024-01-31", -1), std::invalid_argument);
+}
+
+TEST(PriceStore, GetLastNBarsDoesNotCrossContaminateTickers) {
+    PriceStore store(":memory:");
+    store.upsert_bars("nvda.us", {make_bar("2024-01-02", 1.0)});
+    store.upsert_bars("tsla.us", {make_bar("2024-01-02", 2.0), make_bar("2024-01-03", 3.0)});
+
+    EXPECT_EQ(store.get_last_n_bars("nvda.us", "2024-01-31", 5).size(), 1u);
+    EXPECT_EQ(store.get_last_n_bars("tsla.us", "2024-01-31", 5).size(), 2u);
 }
 
 TEST(PriceStore, RecoversAfterMidTransactionFailure) {

@@ -11,3 +11,10 @@ target_link_libraries(data_layer_tests PRIVATE data_layer GTest::gtest GTest::gt
 
 include(GoogleTest)
 gtest_discover_tests(data_layer_tests)
+
+add_executable(regime_detector_tests
+    regime_detector_test.cpp
+)
+target_link_libraries(regime_detector_tests PRIVATE regime_detector GTest::gtest GTest::gtest_main
+                                                     GTest::gmock)
+gtest_discover_tests(regime_detector_tests)

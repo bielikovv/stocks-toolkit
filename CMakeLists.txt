@@ -20,6 +20,12 @@ target_include_directories(data_layer PUBLIC include)
 target_link_libraries(data_layer PUBLIC CURL::libcurl unofficial::sqlite3::sqlite3
                                          nlohmann_json::nlohmann_json)
 
+add_library(regime_detector
+    src/regime_detector/regime_detector.cpp
+)
+target_include_directories(regime_detector PUBLIC include)
+target_link_libraries(regime_detector PUBLIC data_layer)
+
 add_executable(stocks_toolkit_cli src/cli/main.cpp)
 target_link_libraries(stocks_toolkit_cli PRIVATE data_layer)
 

@@ -33,6 +33,12 @@ public:
     std::vector<PriceBar> get_bars(const std::string& ticker, const std::string& start_date,
                                     const std::string& end_date);
 
+    // Up to the `n` most recent bars for `ticker` with date <= `as_of_date`, ordered by
+    // date ascending (oldest first). Returns fewer than `n` if less history is stored.
+    // Throws std::invalid_argument if `n` is not positive.
+    std::vector<PriceBar> get_last_n_bars(const std::string& ticker, const std::string& as_of_date,
+                                           int n);
+
 private:
     sqlite3* db_ = nullptr;
 };

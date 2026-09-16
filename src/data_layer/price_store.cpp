@@ -168,4 +168,44 @@ std::vector<PriceBar> PriceStore::get_bars(const std::string& ticker,
     return bars;
 }
 
+std::vector<PriceBar> PriceStore::get_last_n_bars(const std::string& ticker,
+                                                    const std::string& as_of_date, int n) {
+    if (n <= 0) {
+        throw std::invalid_argument("get_last_n_bars: n must be positive");
+    }
+
+    const char* sql =
+        "SELECT date, open, high, low, close, volume FROM ("
+        "  SELECT date, open, high, low, close, volume FROM prices"
+        "  WHERE ticker = ? AND date <= ? ORDER BY date DESC LIMIT ?"
+        ") ORDER BY date ASC;";
+    StmtGuard guard;
+    check(db_, sqlite3_prepare_v2(db_, sql, -1, &guard.stmt, nullptr), "prepare get_last_n_bars");
+    sqlite3_bind_text(guard.stmt, 1, ticker.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(guard.stmt, 2, as_of_date.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_int(guard.stmt, 3, n);
+
+    std::vector<PriceBar> bars;
+    while (true) {
+        int rc = sqlite3_step(guard.stmt);
+        if (rc == SQLITE_DONE) break;
+        check(db_, rc, "step get_last_n_bars");
+
+        const unsigned char* date_text = sqlite3_column_text(guard.stmt, 0);
+        if (!date_text) {
+            throw std::runtime_error("get_last_n_bars: NULL date column despite NOT NULL constraint");
+        }
+
+        PriceBar bar;
+        bar.date = reinterpret_cast<const char*>(date_text);
+        bar.open = sqlite3_column_double(guard.stmt, 1);
+        bar.high = sqlite3_column_double(guard.stmt, 2);
+        bar.low = sqlite3_column_double(guard.stmt, 3);
+        bar.close = sqlite3_column_double(guard.stmt, 4);
+        bar.volume = sqlite3_column_int64(guard.stmt, 5);
+        bars.push_back(std::move(bar));
+    }
+    return bars;
+}
+
 }  // namespace stocks_toolkit
