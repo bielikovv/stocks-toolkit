@@ -8,10 +8,16 @@ Not financial advice. No guarantee of accuracy or profitability.
 
 ## Status
 
-M0 (data layer) only: fetches daily historical price bars from the
-[Yahoo Finance chart API](https://query1.finance.yahoo.com) for a configurable list of tickers and
-stores them in SQLite. Later modules (regime detection, backtesting, correlation analysis,
-reporting) will build on top of this.
+- **M0 (data layer):** fetches daily historical price bars from the
+  [Yahoo Finance chart API](https://query1.finance.yahoo.com) for a configurable list of tickers
+  and stores them in SQLite.
+- **M1 (regime detector):** classifies an asset's trailing price window as range-bound, trending,
+  or uncertain, using Kaufman's Efficiency Ratio (trend strength) combined with a volatility-scaled
+  containment check (has price wandered further than its own recent volatility would predict).
+  Thresholds are unvalidated defaults — M3 (backtester) is what's expected to tune them against
+  real outcomes.
+
+Later modules (backtesting, correlation analysis, reporting) will build on top of these.
 
 ## Build
 
