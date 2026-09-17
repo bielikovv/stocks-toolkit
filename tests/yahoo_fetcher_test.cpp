@@ -39,14 +39,14 @@ constexpr const char* kSampleResponse = R"({
 TEST(YahooFetcher, FetchFullHistoryRequestsTickerWithPeriod1Zero) {
     MockHttpClient client;
     EXPECT_CALL(client, get(AllOf(HasSubstr("/v8/finance/chart/NVDA"), HasSubstr("period1=0"),
-                                    HasSubstr("interval=1d"))))
+                                    HasSubstr("interval=1d"), HasSubstr("events=div,splits"))))
         .WillOnce(Return(kSampleResponse));
 
     YahooFetcher fetcher(client);
-    auto bars = fetcher.fetch_full_history("NVDA");
+    auto data = fetcher.fetch_full_history("NVDA");
 
-    ASSERT_EQ(bars.size(), 1u);
-    EXPECT_EQ(bars[0].date, "2024-01-02");
+    ASSERT_EQ(data.bars.size(), 1u);
+    EXPECT_EQ(data.bars[0].date, "2024-01-02");
 }
 
 TEST(YahooFetcher, FetchSinceUsesGivenDateAsPeriod1) {
@@ -55,9 +55,9 @@ TEST(YahooFetcher, FetchSinceUsesGivenDateAsPeriod1) {
     EXPECT_CALL(client, get(HasSubstr("period1=1704153600"))).WillOnce(Return(kSampleResponse));
 
     YahooFetcher fetcher(client);
-    auto bars = fetcher.fetch_since("NVDA", "2024-01-02");
+    auto data = fetcher.fetch_since("NVDA", "2024-01-02");
 
-    ASSERT_EQ(bars.size(), 1u);
+    ASSERT_EQ(data.bars.size(), 1u);
 }
 
 TEST(YahooFetcher, PropagatesHttpErrors) {

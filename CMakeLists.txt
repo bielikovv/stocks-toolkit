@@ -15,22 +15,11 @@ add_library(data_layer
     src/data_layer/yahoo_fetcher.cpp
     src/data_layer/yahoo_parser.cpp
     src/data_layer/price_store.cpp
+    src/data_layer/bar_validator.cpp
 )
 target_include_directories(data_layer PUBLIC include)
 target_link_libraries(data_layer PUBLIC CURL::libcurl unofficial::sqlite3::sqlite3
                                          nlohmann_json::nlohmann_json)
-
-add_library(regime_detector
-    src/regime_detector/regime_detector.cpp
-)
-target_include_directories(regime_detector PUBLIC include)
-target_link_libraries(regime_detector PUBLIC data_layer)
-
-add_library(grid_calculator
-    src/grid_calculator/grid_calculator.cpp
-)
-target_include_directories(grid_calculator PUBLIC include)
-target_link_libraries(grid_calculator PUBLIC data_layer)
 
 add_executable(stocks_toolkit_cli src/cli/main.cpp)
 target_link_libraries(stocks_toolkit_cli PRIVATE data_layer)

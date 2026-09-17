@@ -1,0 +1,5 @@
+# Market benchmarks — fetched like any other ticker, but flagged as
+# is_benchmark=true in ticker_metadata so later modules (relative strength,
+# regime classification) can find "the market" without a hardcoded name.
+# One Yahoo Finance ticker symbol per line. Lines starting with '#' are ignored.
+SPY
