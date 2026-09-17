@@ -1,26 +1,126 @@
 # One Yahoo Finance ticker symbol per line. Lines starting with '#' are ignored.
+# Broadened across sectors so later modules (relative-strength ranking,
+# historical analog matching) have a real universe to work over instead of a
+# big-tech-only sample. The market benchmark (SPY) lives in benchmarks.txt,
+# not here.
+
+# Technology
 NVDA
 AAPL
 MSFT
 GOOGL
 AMZN
 META
-TSLA
 AVGO
-NFLX
-AMD
-CRM
 ORCL
 ADBE
+CRM
+AMD
 QCOM
+TXN
+INTC
+CSCO
+IBM
+NOW
+INTU
+AMAT
+MU
+
+# Financials
 JPM
+BAC
+WFC
+GS
+MS
 V
 MA
+AXP
+BLK
+SCHW
+C
+USB
+
+# Healthcare
 UNH
+JNJ
+LLY
+PFE
+ABBV
+MRK
+TMO
+ABT
+DHR
+BMY
+CVS
+MDT
+
+# Energy
 XOM
 CVX
+COP
+SLB
+EOG
+OXY
+PSX
+
+# Consumer discretionary
+TSLA
+HD
+MCD
+NKE
+SBUX
+LOW
+BKNG
+TJX
+
+# Consumer staples
 WMT
+PG
+KO
+PEP
 COST
+PM
+MDLZ
+CL
+
+# Industrials
+BA
+CAT
+GE
+HON
+UPS
+LMT
+RTX
+DE
+UNP
+
+# Utilities
+NEE
+DUK
+SO
+D
+AEP
+
+# Real estate
+PLD
+AMT
+EQIX
+SPG
+
+# Materials
+LIN
+SHW
+FCX
+NEM
+
+# Communication services
+NFLX
+DIS
+CMCSA
+TMUS
+VZ
+T
+
+# Higher-volatility / previously watched names, kept from the original list
 HOOD
 MSTR
-SPY
